@@ -17,6 +17,7 @@ export default function App() {
     dateTo: null,
   });
   const [selectedRideId, setSelectedRideId] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const { rides, loading, error, fetchRides } = useSupabase();
   const { vehicles, platforms } = useRideStats();
@@ -35,15 +36,28 @@ export default function App() {
     fetchRides(newFilters);
   };
 
+  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+  const closeDrawer = () => setIsDrawerOpen(false);
+
+  const handleSelectRide = (rideId: string | null) => {
+    setSelectedRideId(rideId);
+    if (rideId) {
+      closeDrawer();
+    }
+  };
+
   return (
     <div className="app">
       <header className="app-header">
+        <button className="menu-toggle" onClick={toggleDrawer} aria-label="Toggle menu">
+          ☰
+        </button>
         <h1>Ruta Visualizer</h1>
         <p>Vehicle Trip Map Visualization</p>
       </header>
 
       <div className="app-content">
-        <aside className="sidebar">
+        <aside className={`sidebar ${isDrawerOpen ? 'open' : ''}`}>
           <TripFiltersComponent
             vehicles={vehicles}
             platforms={platforms}
@@ -55,7 +69,7 @@ export default function App() {
             rides={rides}
             statsMap={statsMap}
             selectedRideId={selectedRideId}
-            onSelectRide={setSelectedRideId}
+            onSelectRide={handleSelectRide}
           />
         </aside>
 
@@ -66,10 +80,12 @@ export default function App() {
             <TripMap
               rides={rides}
               selectedRideId={selectedRideId}
-              onSelectRide={setSelectedRideId}
+              onSelectRide={handleSelectRide}
             />
           )}
         </main>
+
+        <div className={`drawer-overlay ${isDrawerOpen ? 'open' : ''}`} onClick={closeDrawer} />
       </div>
     </div>
   );
