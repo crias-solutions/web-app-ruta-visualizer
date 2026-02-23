@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import type { RideUpload } from '../types';
 import { parseGpsCsv } from '../utils/gpsParser';
+import { mapMatchCoordinates } from '../utils/mapMatch';
 
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -37,10 +38,37 @@ function MapBounds({ coordinates }: { coordinates: [number, number][] }) {
 }
 
 export default function TripMap({ rides, selectedRideId, onSelectRide }: TripMapProps) {
+  const [matchedRoutes, setMatchedRoutes] = useState<Map<string, [number, number][]>>(new Map());
+
+  useEffect(() => {
+    async function matchRoutes() {
+      if (rides.length === 0) return;
+
+      const newMatchedRoutes = new Map<string, [number, number][]>();
+
+      for (const ride of rides) {
+        const gpsPoints = parseGpsCsv(ride.gps_csv);
+        const rawCoords: [number, number][] = gpsPoints.map((p) => [p.latitude, p.longitude]);
+
+        if (rawCoords.length >= 2) {
+          const matched = await mapMatchCoordinates(rawCoords);
+          newMatchedRoutes.set(ride.ride_id, matched);
+        } else {
+          newMatchedRoutes.set(ride.ride_id, rawCoords);
+        }
+      }
+
+      setMatchedRoutes(newMatchedRoutes);
+    }
+
+    matchRoutes();
+  }, [rides]);
+
   const rideData = useMemo(() => {
     return rides.map((ride, index) => {
       const gpsPoints = parseGpsCsv(ride.gps_csv);
-      const coordinates: [number, number][] = gpsPoints.map((p) => [p.latitude, p.longitude]);
+      const rawCoordinates: [number, number][] = gpsPoints.map((p) => [p.latitude, p.longitude]);
+      const coordinates = matchedRoutes.get(ride.ride_id) || rawCoordinates;
       const color = COLORS[index % COLORS.length];
       const isSelected = ride.ride_id === selectedRideId;
 
@@ -48,11 +76,12 @@ export default function TripMap({ rides, selectedRideId, onSelectRide }: TripMap
         ride,
         gpsPoints,
         coordinates,
+        rawCoordinates,
         color,
         isSelected,
       };
     });
-  }, [rides, selectedRideId]);
+  }, [rides, selectedRideId, matchedRoutes]);
 
   const allCoordinates = useMemo(() => {
     return rideData.flatMap((r) => r.coordinates);
