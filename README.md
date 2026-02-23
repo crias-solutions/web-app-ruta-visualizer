@@ -1,118 +1,130 @@
-# py-opencode-scaffold
+# web-app-ruta-visualizer
 
-[![Open in GitHub Codespaces](https://img.shields.io/badge/Open%20in-Codespaces-2088FF?style=for-the-badge&logo=github)](https://codespaces.new/crias-solutions/py-opencode-scaffold)
-[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-F77F00?style=for-the-badge&logo=mozilla)](https://opensource.org/licenses/MPL-2.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Supabase](https://img.shields.io/badge/Supabase-2.x-3FCF8E?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Leaflet](https://img.shields.io/badge/Leaflet-1.9-199900?style=flat-square&logo=leaflet&logoColor=white)](https://leafletjs.com/)
+[![Vitest](https://img.shields.io/badge/Vitest-4-6E9F18?style=flat-square&logo=vitest&logoColor=white)](https://vitest.dev/)
 
-[![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![Node.js](https://img.shields.io/badge/Node.js-20-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![OpenCode](https://img.shields.io/badge/OpenCode-CLI-8B5CF6?style=flat-square&logo=openai&logoColor=white)](https://opencode.ai/)
-
----
-
-## What is this?
-
-A ready-to-use Python development environment template for GitHub Codespaces with OpenCode AI assistant pre-configured. Create your own copy, launch a Codespace, and start coding with AI assistance in minutes.
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-F77F00?style=flat-square&logo=mozilla)](LICENSE)
 
 ---
 
-## Getting Started
+## Why
 
-1. Click **"Use this template"** → **"Create a new repository"**
-2. Name your project and choose visibility (public/private)
-3. Click **"Create repository"**
-4. In your new repo, click the **"Open in Codespaces"** badge above
-5. Wait for the environment to build (~2 minutes)
-6. Open terminal and run:
+Understanding vehicle trip patterns requires more than spreadsheets. Ruta Visualizer transforms raw GPS data into interactive maps, enabling quick analysis of routes, speeds, and trip statistics.
+
+---
+
+## What
+
+- **Interactive Maps** — Visualize GPS routes on Leaflet maps with click-to-select trips
+- **Real-time Statistics** — Distance, duration, average and max speed calculated from GPS points
+- **Smart Filtering** — Filter by vehicle, platform, or date range to find relevant trips
+
+---
+
+## How
+
+### Prerequisites
+
+- Node.js 20+
+- npm
+- Supabase account (for data storage)
+
+### Installation
+
+```bash
+git clone https://github.com/crias-solutions/web-app-ruta-visualizer.git
+cd web-app-ruta-visualizer
+npm install
+```
+
+### Configuration
+
+1. Copy the example environment file:
    ```bash
-   opencode
+   cp .env.example .env
    ```
-7. Start coding with AI assistance!
 
----
+2. Add your Supabase credentials to `.env`:
+   ```
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   ```
 
-## Configuration (Optional)
+### Run
 
-### API Keys Setup
+```bash
+npm run dev
+```
 
-OpenCode requires an API key from a supported provider.
-
-#### Option 1: Anthropic (Claude)
-
-1. Get your API key from [console.anthropic.com](https://console.anthropic.com/)
-2. In GitHub, go to **Settings** → **Codespaces** → **Secrets**
-3. Click **New secret**:
-   - Name: `ANTHROPIC_API_KEY`
-   - Value: Your API key
-4. Rebuild your Codespace
-
-#### Option 2: OpenAI (GPT)
-
-1. Get your API key from [platform.openai.com](https://platform.openai.com/)
-2. In GitHub, go to **Settings** → **Codespaces** → **Secrets**
-3. Click **New secret**:
-   - Name: `OPENAI_API_KEY`
-   - Value: Your API key
-4. Rebuild your Codespace
+Open http://localhost:5173 in your browser.
 
 ---
 
 ## Usage
 
-### Launch OpenCode
+### Filter Trips
 
-```bash
-opencode
-```
+Use the sidebar filters to narrow down trips by:
+- Vehicle type
+- Platform
+- Date range
 
-### Common Commands
+### View Trip Details
+
+1. Click a trip in the list or on the map
+2. See statistics: distance, duration, speeds
+3. Route highlights on the map
+
+---
+
+## Reference
+
+### Commands
 
 | Command | Description |
 |---------|-------------|
-| `opencode` | Launch AI assistant |
-| `/help` | Show available commands |
-| `/clear` | Clear conversation |
-| `/quit` | Exit OpenCode |
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run test` | Run tests once |
+| `npm run test:watch` | Run tests in watch mode |
 
----
+### Tech Stack
 
-## Project Structure
+| Layer | Technology |
+|-------|------------|
+| Framework | React 18 |
+| Language | TypeScript |
+| Build | Vite |
+| Database | Supabase |
+| Maps | Leaflet + React-Leaflet |
+| CSV Parsing | PapaParse |
+| Testing | Vitest + Testing Library |
+
+### Project Structure
 
 ```
-py-opencode-scaffold/
-├── .devcontainer/
-│   └── devcontainer.json    # Codespaces configuration
-├── .gitattributes           # Git file handling rules
-├── .gitignore               # Ignored files and folders
-├── AGENTS.md                # AI context template
-├── LICENSE                  # MPL 2.0
-├── README.md                # This file
-└── requirements.txt         # Python dependencies
+src/
+├── components/       # React components
+│   ├── Map.tsx
+│   ├── StatsDashboard.tsx
+│   ├── TripFilters.tsx
+│   └── TripList.tsx
+├── hooks/            # Custom React hooks
+│   └── useSupabase.ts
+├── utils/            # Utility functions
+│   ├── gpsParser.ts
+│   └── tripStats.ts
+├── test/             # Test files
+├── types.ts          # TypeScript interfaces
+├── App.tsx           # Main component
+└── main.tsx          # Entry point
 ```
-
----
-
-## AGENTS.md Template
-
-This scaffold includes an `AGENTS.md` file—a template for providing context to OpenCode about your project. Edit it to describe your application, coding standards, and project-specific instructions.
-
-See [AGENTS.md](AGENTS.md) for the template.
-
----
-
-## Saving Your Work
-
-Before deleting your Codespace, always push your changes:
-
-```bash
-git add .
-git commit -m "Your commit message"
-git push origin main
-```
-
-Your code is safely stored on GitHub. You can:
-- Clone it locally: `git clone https://github.com/YOUR-USERNAME/YOUR-REPO.git`
-- Download as ZIP from GitHub
-- Create a new Codespace anytime
 
 ---
 
